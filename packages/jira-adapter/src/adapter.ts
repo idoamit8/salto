@@ -138,6 +138,7 @@ import issueLayoutFilter from './filters/layouts/issue_layout'
 import removeSimpleFieldProjectFilter from './filters/remove_simplified_field_project'
 import changeServiceDeskIdFieldProjectFilter from './filters/change_projects_service_desk_id'
 import addJsmTypesAsFieldsFilter from './filters/add_jsm_types_as_fields'
+import formsFilter from './filters/forms'
 import createReferencesIssueLayoutFilter from './filters/layouts/create_references_layouts'
 import issueTypeHierarchyFilter from './filters/issue_type_hierarchy_filter'
 import projectFieldContextOrder from './filters/project_field_contexts_order'
@@ -158,6 +159,7 @@ import portalGroupsFilter from './filters/portal_groups'
 import ScriptRunnerClient from './client/script_runner_client'
 import { weakReferenceHandlers } from './weak_references'
 import { jiraJSMEntriesFunc } from './jsm_utils'
+import { getCloudId } from './filters/automation/cloud_id'
 
 const { getAllElements } = elementUtils.ducktype
 const { findDataField, computeGetArgs } = elementUtils
@@ -271,6 +273,7 @@ export const DEFAULT_FILTERS = [
   referenceBySelfLinkFilter,
   // Must run after referenceBySelfLinkFilter
   removeSelfFilter,
+  formsFilter,
   fieldReferencesFilter,
   // Must run after fieldReferencesFilter
   addJsmTypesAsFieldsFilter,
@@ -509,6 +512,7 @@ export default class JiraAdapter implements AdapterOperations {
       || !this.userConfig.fetch.enableJSM) {
       return { elements: [] }
     }
+    const cloudId = await getCloudId(this.client)
     const serviceDeskProjects = swaggerResponseElements
       .filter(project => project.elemID.typeName === PROJECT_TYPE)
       .filter(isInstanceElement)
@@ -519,6 +523,7 @@ export default class JiraAdapter implements AdapterOperations {
         projectKey: projectInstance.value.key,
         serviceDeskId: projectInstance.value.serviceDeskId.id,
         projectId: projectInstance.value.id,
+        cloudId,
       }
       log.debug(`Fetching elements for brand ${projectInstance.elemID.name}`)
       return getAllElements({

@@ -2119,9 +2119,49 @@ const JSM_DUCKTYPE_TYPES: JiraDuckTypeConfig['types'] = {
       ],
     },
   },
+  Form: {
+    request: {
+      url: '/gateway/api/proforma/cloudid/{cloudId}/api/1/projects/{projectId}/forms',
+      recurseInto: [
+        {
+          type: 'Form__formDetails',
+          toField: 'formDetails',
+          context: [{ name: 'formId', fromField: 'id' }, { name: 'projId', fromField: 'projectId' }],
+        },
+      ],
+    },
+    transformation: {
+      idFields: ['name', 'projectKey'],
+      fieldsToOmit: [
+        { fieldName: 'uuid' },
+        { fieldName: 'project' },
+        { fieldName: 'editUrl' },
+        { fieldName: 'v2' },
+        { fieldName: 'updated' },
+        { fieldName: 'requesttypes' },
+        { fieldName: 'name' },
+      ],
+      fieldsToHide: [
+        { fieldName: 'id' },
+        { fieldName: 'projectId' },
+      ],
+      dataField: '.',
+    },
+  },
+  Form__formDetails: {
+    request: {
+      url: '/gateway/api/proforma/cloudid/{cloudId}/api/2/projects/{projId}/forms/{formId}',
+    },
+    transformation: {
+      dataField: '.',
+      fieldsToOmit: [
+        { fieldName: 'projectKey' },
+      ],
+    },
+  },
 }
 
-const JSM_DUCKTYPE_SUPPORTED_TYPES = {
+export const JSM_DUCKTYPE_SUPPORTED_TYPES = {
   RequestType: ['RequestType'],
   CustomerPermissions: ['CustomerPermissions'],
   Queue: ['Queue'],
@@ -2129,6 +2169,7 @@ const JSM_DUCKTYPE_SUPPORTED_TYPES = {
   Calendar: ['Calendar'],
   PortalSettings: ['PortalSettings'],
   SLA: ['SLA'],
+  Form: ['Form'],
 }
 
 export const SCRIPT_RUNNER_DUCKTYPE_SUPPORTED_TYPES = {
