@@ -56,7 +56,7 @@ const convertUserNameToId = (userMap: UserMap): WalkOnUsersCallback => (
 const filter: FilterCreator = ({ client, config, getUserMapFunc, elementsSource }) => ({
   name: 'userIdFilter',
   onFetch: async elements => {
-    if (!(config.fetch.convertUsersIds ?? true)) {
+    if (!(config.fetch.convertUsersIds ?? false)) {
       return
     }
     const userMap = await getUserMapFunc()
